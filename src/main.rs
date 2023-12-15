@@ -197,6 +197,8 @@ mod day1{
     }
 }
 
+// #[allow(unused)]
+// use day1::{extract_number,extract_number_fromwords};
 
 #[allow(unused)]
 #[allow(non_snake_case)]
@@ -261,18 +263,20 @@ mod day2{
     }
 }
 
+// #[allow(unused)]
+// use day2::{extractGameNumber,extractrbg,getans,getans2};
+
 #[allow(unused)]
 mod day3{
 
     pub fn getans(input:Vec<String>)->i64{
         let mut ans:i64 = 0;
-        let mut n:i64 = input.len() as i64;
-        let mut m:i64 = input[0].len() as i64;
+        let mut n = input.len() ;
+        let mut m = input[0].len();
         m += 1;
         n += 1;
         let mut arr:Vec<Vec<char>>  = Vec::new();
         
-        let mut j:i64 = 0;
         
         arr.push(Vec::new());
         for j in 0..(m+1) {
@@ -282,7 +286,7 @@ mod day3{
             arr.push(Vec::new());
             arr[i as usize].push('.');
             for c in input[(i-1) as usize].chars(){
-                arr[i as usize].push(c);
+                arr[i].push(c);
             }
             arr[i as usize].push('.');
         }
@@ -290,11 +294,46 @@ mod day3{
         for j in 0..m {
             arr[n as usize].push('.');
         }
-
+        let mut nos:Vec<Vec<i64>> = Vec::new();
         for i in 1..n{
+            nos.push(Vec::new());
             let mut curr:i64 = 0;
+            let mut issym:bool = false;
             for j in 1..m{
-                print!("{}",arr[i as usize][j as usize]);
+                if((arr[i][j]>'9' || arr[i][j]<'0')){
+                    if(issym && curr != 0){
+                        //println!("{i},{j},{curr}");
+                        ans = ans + curr;
+                        nos[i-1].push(curr);
+                    }
+                    curr = 0;
+                    issym = false;
+                }
+                else if(arr[i][j]<='9' && arr[i][j]>='0'){
+                    curr *= 10;
+                    curr += arr[i][j] as i64-'0' as i64;
+
+                    for x in [-1,0,1]{
+                        for y in [-1,0,1]{
+                            let it1 = (i as i64 +x) as usize;
+                            let it2 = (j as i64+y) as usize;
+                            if(it1 == i && it2 == j){continue;}
+                            if((arr[it1][it2] >'9' || arr[it1][it2]<'0') && arr[it1][it2] != '.'){
+                                issym = true;
+                            }
+                        }
+                    }
+                }
+            }
+            if(issym){
+                ans += curr;
+                nos[i-1].push(curr);
+            }
+        }
+
+        for nolist in nos{
+            for no in nolist{
+                print!("{no} ");
             }
             println!("");
         }
@@ -304,11 +343,6 @@ mod day3{
     }
 }
 
-
-// #[allow(unused)]
-// use day1::{extract_number,extract_number_fromwords};
-// #[allow(unused)]
-// use day2::{extractGameNumber,extractrbg,getans,getans2};
 #[allow(unused)]
 use day3::{getans};
 
@@ -327,7 +361,7 @@ fn main() {
             }
         }
     }
-    getans(input);
+    ans = getans(input);
     println!("ans = {}\n",ans);
     
 }
